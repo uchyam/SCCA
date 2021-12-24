@@ -47,6 +47,11 @@ public class CommentsListener extends CPP14BaseListener {
 //        determineWhetherCommentIsNecessary(ctx);
 //    }
 
+    //クラス
+    @Override public void enterClassspecifier(CPP14Parser.ClassspecifierContext ctx) {
+
+    }
+
     //関数定義の前
     @Override
     public void enterFunctiondefinition(CPP14Parser.FunctiondefinitionContext ctx){
@@ -68,25 +73,15 @@ public class CommentsListener extends CPP14BaseListener {
         isFunctiondefinition = false;
     }
 
-    //クラス名，関数宣言，変数宣言の前．
+    //(メンバ?)関数宣言，変数宣言の前．
     @Override
     public void enterMemberdeclaration(CPP14Parser.MemberdeclarationContext ctx) {
         //TODO memberdeclartionで，simpletypespecifierになってるやつが変数名になる？
-        System.out.println("hen:"+ctx.getText());
         isParametersandqualifiers = false;
     }
     @Override public void exitMemberdeclaration(CPP14Parser.MemberdeclarationContext ctx) {
-//        if (infoObj.isFunctionStatement()) {
-//            if (isParametersandqualifiers) {
-//                determineWhetherCommentIsNecessary(ctx);
-//            }
-//        } else if (infoObj.isOthersStatement()){
-//            if (!isParametersandqualifiers) {
-//                determineWhetherCommentIsNecessary(ctx);
-//            }
-//        }
-        //kansuusengen
         if(isParametersandqualifiers){
+            //関数宣言
             if(infoObj.isFunctionStatement()){
                 determineWhetherCommentIsNecessary(ctx);
             }
@@ -105,7 +100,7 @@ public class CommentsListener extends CPP14BaseListener {
     //kannsuunakami?
     @Override public void enterStatementseq(CPP14Parser.StatementseqContext ctx) { }
 
-    //変数宣言の前
+    //変数宣言、クラス,構造体の前
     @Override
     public void enterSimpledeclaration(CPP14Parser.SimpledeclarationContext ctx) {
         //TODO memberdeclartionで，simpletypespecifierになってるやつが変数名になる？

@@ -1,7 +1,7 @@
 {
   "SelectionsStatement" : "false",
   "IterationsStatement" : "false",
-  "FunctionStatement" : "true",
-  "OthersStatement" : "false"
+  "FunctionStatement" : "false",
+  "OthersStatement" : "true"
 }
 

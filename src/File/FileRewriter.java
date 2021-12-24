@@ -97,6 +97,7 @@ public class FileRewriter{
         comment.add(indent+" *@brief");
         comment.add(indent+" *@param");
         comment.add(indent+" *@return");
+        comment.add(indent+" *@attention This comment was written by SCCA.");
         comment.add(indent+" */");
         return comment;
     }

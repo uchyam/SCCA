@@ -15,7 +15,6 @@ public class CommentsListener2 extends CPP14BaseListener {
     private ArrayList<String> results = new ArrayList<String>();
     public List<String> getResults(){ return this.results; }
 
-    //TODO:rewrite
     private ArrayList<Integer> resultsLineNum = new ArrayList<Integer>();
     public List<Integer> getResultsLineNum(){ return this.resultsLineNum; }
     private ArrayList<String> resultsText = new ArrayList<String>();
@@ -35,10 +34,6 @@ public class CommentsListener2 extends CPP14BaseListener {
     public CommentsListener2(CommonTokenStream tokens, CPP14Parser parser) {
         this.tokens = tokens;
         this.parser = parser;
-        //TODO 設定ファイルをオプションで選択できるようにした方がいい？
-        FileInputer fileInPuter = new FileInputer();
-        fileInPuter.readSettingFileForNecessaryComments("Config/SettingForNecessaryComments.json");
-        infoObj = fileInPuter.getInfoForNecessaryCommentsObj();
     }
 
     //    //自作された型のポインタ
@@ -50,50 +45,20 @@ public class CommentsListener2 extends CPP14BaseListener {
     //関数定義の前
     @Override
     public void enterFunctiondefinition(CPP14Parser.FunctiondefinitionContext ctx){
-        if (infoObj.isFunctionStatement()) {
-            determineWhetherCommentIsNecessary(ctx);
-        }
-        System.out.println("kan:"+ctx.getText());
-        isFunctiondefinition = true;
+        determineWhetherCommentIsNecessary(ctx);
     }
 
-    //hikiiduu?
-    @Override public void enterParameterdeclarationlist(CPP14Parser.ParameterdeclarationlistContext ctx) {
-        System.out.println("param_kata:"+ctx.getStart().getText()+",param_name:"+ctx.getStop().getText());
-    }
-    @Override public void exitParameterdeclarationlist(CPP14Parser.ParameterdeclarationlistContext ctx) {
-    }
-
-    @Override public void exitFunctiondefinition(CPP14Parser.FunctiondefinitionContext ctx) {
-        isFunctiondefinition = false;
-    }
-
-    //クラス名，関数宣言，変数宣言の前．
+    //(メンバ?)関数宣言，変数宣言の前．
     @Override
     public void enterMemberdeclaration(CPP14Parser.MemberdeclarationContext ctx) {
         //TODO memberdeclartionで，simpletypespecifierになってるやつが変数名になる？
-        System.out.println("hen:"+ctx.getText());
         isParametersandqualifiers = false;
     }
+
     @Override public void exitMemberdeclaration(CPP14Parser.MemberdeclarationContext ctx) {
-//        if (infoObj.isFunctionStatement()) {
-//            if (isParametersandqualifiers) {
-//                determineWhetherCommentIsNecessary(ctx);
-//            }
-//        } else if (infoObj.isOthersStatement()){
-//            if (!isParametersandqualifiers) {
-//                determineWhetherCommentIsNecessary(ctx);
-//            }
-//        }
-        //kansuusengen
         if(isParametersandqualifiers){
-            if(infoObj.isFunctionStatement()){
-                determineWhetherCommentIsNecessary(ctx);
-            }
-        }else {
-            if(infoObj.isOthersStatement()){
-                determineWhetherCommentIsNecessary(ctx);
-            }
+            //関数宣言
+            determineWhetherCommentIsNecessary(ctx);
         }
     }
 
@@ -104,31 +69,6 @@ public class CommentsListener2 extends CPP14BaseListener {
 
     //kannsuunakami?
     @Override public void enterStatementseq(CPP14Parser.StatementseqContext ctx) { }
-
-    //変数宣言の前
-    @Override
-    public void enterSimpledeclaration(CPP14Parser.SimpledeclarationContext ctx) {
-        //TODO memberdeclartionで，simpletypespecifierになってるやつが変数名になる？
-        if (infoObj.isOthersStatement()) {
-            determineWhetherCommentIsNecessary(ctx);
-        }
-    }
-
-    //Loopの前
-    @Override
-    public void enterIterationstatement(CPP14Parser.IterationstatementContext ctx){
-        //Iterationstatementの最も左側のTokenを取得
-        if( infoObj.isIterationsStatement() ) {
-            determineWhetherCommentIsNecessary(ctx);
-        }
-    }
-    //if,switchの前
-    @Override
-    public void enterSelectionstatement(CPP14Parser.SelectionstatementContext ctx){
-        if( infoObj.isSelectionsStatement() ) {
-            determineWhetherCommentIsNecessary(ctx);
-        }
-    }
 
     @Override
     public  void exitTranslationunit(CPP14Parser.TranslationunitContext ctx){
