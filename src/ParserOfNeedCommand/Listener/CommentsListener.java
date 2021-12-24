@@ -76,12 +76,22 @@ public class CommentsListener extends CPP14BaseListener {
         isParametersandqualifiers = false;
     }
     @Override public void exitMemberdeclaration(CPP14Parser.MemberdeclarationContext ctx) {
-        if (infoObj.isFunctionStatement()) {
-            if (isParametersandqualifiers) {
+//        if (infoObj.isFunctionStatement()) {
+//            if (isParametersandqualifiers) {
+//                determineWhetherCommentIsNecessary(ctx);
+//            }
+//        } else if (infoObj.isOthersStatement()){
+//            if (!isParametersandqualifiers) {
+//                determineWhetherCommentIsNecessary(ctx);
+//            }
+//        }
+        //kansuusengen
+        if(isParametersandqualifiers){
+            if(infoObj.isFunctionStatement()){
                 determineWhetherCommentIsNecessary(ctx);
             }
-        } else if (infoObj.isOthersStatement()){
-            if (!isParametersandqualifiers) {
+        }else {
+            if(infoObj.isOthersStatement()){
                 determineWhetherCommentIsNecessary(ctx);
             }
         }

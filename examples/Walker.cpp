@@ -1,56 +1,50 @@
-/**
- * @file LineTraceArea.h
- * @brief ライントレースエリアを攻略するクラス
- * @author Hisataka-Hagiyama,uchyam
- */
+#include "Walker.h"
 
-#ifndef LINETRACEAREA_H
-#define LINETRACEAREA_H
-#include "array"
-#include "LineTracer.h"
-#include "Pid.h"
 
-#include "StraightRunner.h"
-#include "Mileage.h"
-#include "Measurer.h"
-#include "Controller.h"
+void Walker::angleChange(int angle, int rotation) {
 
-/**
- * Lコース/Rコース向けの設定を定義
- * デフォルトはLコース
- */
-#if defined(MAKE_RIGHT)
-static constexpr bool IS_LEFT_COURSE = false;  // Rコース
-#else
-static constexpr bool IS_LEFT_COURSE = true;  // Lコース
-#endif
+    StretchVector *vector;
+    int *ta = NULL;
 
-//区間の情報を保持する構造体
-struct SectionParam {
-  double sectionDistance;       //区間の走行距離
-  int sectionTargetBrightness;  //区間の目標輝度
-  int sectionPwm;               //区間のPWM値
-  PidGain sectionPidGain;       //区間のPIDゲイン
-};
+    int32_t defaultAngleL; /*int b*/
 
-class LineTraceArea {
- public:
+    int8_t dAngle = 75;   //int 8
+    int32_t dAngle =21;
 
-  static void runLineTraceArea();
+    if(angle % 5 == 0 && angle % 45 != 0) {
+        dAngle = 8;
+        angle /= 5;
+    } else {
+        angle -= angle % 45;
+        angle /= 45;
+    }
+    for(int i=0; i<n; i++){
+    }
 
-  static void runLineTraceAreaShortcut();
+    defaultAngleL = leftWheel.getCount();
+    //test
+    while(1) {
+        run(0, 10 * rotation);
+        if(rotation >= 0) {
+        //ハロー
+            if(leftWheel.getCount() - defaultAngleL < -dAngle * angle * rotation ||
+                leftWheel.getCount() - defaultAngleL > dAngle * angle * rotation) {
+                break;
+            }
+        }//ハロー
+         else {
+            if(leftWheel.getCount() - defaultAngleL > -dAngle * angle * rotation ||
+                leftWheel.getCount() - defaultAngleL < dAngle * angle * rotation) {
+                break;
+            }
+        }
+        clock.sleep(4);
+    }
+    stop();
+}
 
- private:
-  static const int LEFT_SECTION_SIZE = 8;   // Lコースの区間の数
-  static const int RIGHT_SECTION_SIZE = 8;
-  static const std::array<SectionParam, LEFT_SECTION_SIZE> LEFT_COURSE_INFO;  // Lコースの情報
-  static const std::array<SectionParam, RIGHT_SECTION_SIZE> RIGHT_COURSE_INFO;
+Walker::Walker(){
+}
 
-  /**
-   * コンストラクタ
-   * インスタンス化を禁止するためにpriveteにし、処理については記述していない
-   */
-  LineTraceArea();
-};
-
-#endif
+Walker::~Walker(){
+}

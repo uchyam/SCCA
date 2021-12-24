@@ -4,10 +4,7 @@ import File.FileInputer;
 import File.InfoForNecessaryComments;
 import ParserOfNeedCommand.Generated.CPP14BaseListener;
 import ParserOfNeedCommand.Generated.CPP14Parser;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
-
+import org.antlr.v4.runtime.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,12 +76,22 @@ public class CommentsListener2 extends CPP14BaseListener {
         isParametersandqualifiers = false;
     }
     @Override public void exitMemberdeclaration(CPP14Parser.MemberdeclarationContext ctx) {
-        if (infoObj.isFunctionStatement()) {
-            if (isParametersandqualifiers) {
+//        if (infoObj.isFunctionStatement()) {
+//            if (isParametersandqualifiers) {
+//                determineWhetherCommentIsNecessary(ctx);
+//            }
+//        } else if (infoObj.isOthersStatement()){
+//            if (!isParametersandqualifiers) {
+//                determineWhetherCommentIsNecessary(ctx);
+//            }
+//        }
+        //kansuusengen
+        if(isParametersandqualifiers){
+            if(infoObj.isFunctionStatement()){
                 determineWhetherCommentIsNecessary(ctx);
             }
-        } else if (infoObj.isOthersStatement()){
-            if (!isParametersandqualifiers) {
+        }else {
+            if(infoObj.isOthersStatement()){
                 determineWhetherCommentIsNecessary(ctx);
             }
         }
