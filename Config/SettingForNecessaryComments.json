@@ -1,7 +1,15 @@
 {
   "SelectionsStatement" : "false",
   "IterationsStatement" : "false",
-  "FunctionStatement" : "false",
+  "Function" : "true",
+  "MemberFunction" : "true",
+  "Class" : "true",
+  "ClassMemberVariables" : "true",
+  "Structure" : "true",
+  "StructMemberVariables" : "true",
+  "Union" : "true",
+  "UnionMemberVariables" : "true",
+  "EnumStatement" : "true",
+  "GlobalVariables" : "true",
   "OthersStatement" : "true"
 }
-

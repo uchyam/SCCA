@@ -32,12 +32,43 @@ struct SectionParam {
   PidGain sectionPidGain;       //区間のPIDゲイン
 };
 
+typedef struct employee {
+    char name[12];
+    double hours;
+    int wage;
+} EMPLOYEE;
+
+union book {
+    char name[16];
+    int price;
+};
+
+enum color {
+  Red,    // 0
+  Blue,   // 1
+  Green,  // 2
+};
+
+enum class E_Dog
+{
+    Poodle,
+    Shiba,
+    Chihuahua,
+    Bulldog,
+};
+
+int Gloval = 1;//izen
+
 class LineTraceArea {
  public:
 
   static void runLineTraceArea();
 
   static void runLineTraceAreaShortcut();
+
+  int Area() {
+         return height_ * width_;
+      }
 
  private:
   static const int LEFT_SECTION_SIZE = 8;
@@ -49,10 +80,3 @@ class LineTraceArea {
 };
 
 #endif
-
-/*???*/
-typedef struct employee {
-    char name[12];
-    double hours;
-    int wage;
-} EMPLOYEE;
