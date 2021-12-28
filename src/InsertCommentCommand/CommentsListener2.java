@@ -48,7 +48,6 @@ public class CommentsListener2 extends CPP14BaseListener {
         determineWhetherCommentIsNecessary(ctx);
     }
 
-    //(メンバ?)関数宣言，変数宣言の前．
     @Override
     public void enterMemberdeclaration(CPP14Parser.MemberdeclarationContext ctx) {
         //TODO memberdeclartionで，simpletypespecifierになってるやつが変数名になる？
@@ -62,7 +61,6 @@ public class CommentsListener2 extends CPP14BaseListener {
         }
     }
 
-    //ParametersandqualifiersでMemberdeclarationが関数宣言？
     @Override public void enterParametersandqualifiers(CPP14Parser.ParametersandqualifiersContext ctx) {
         isParametersandqualifiers = true;
     }

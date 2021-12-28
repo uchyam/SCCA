@@ -10,8 +10,9 @@ public class InfoForNecessaryComments {
     private boolean SelectionsStatement;
     private boolean IterationsStatement;
     private boolean Function;
-    private boolean MemberFunction;
+    private boolean FunctionVariables;
     private boolean Class;
+    private boolean ClassMemberFunction;
     private boolean ClassMemberVariables;
     private boolean Structure;
     private boolean StructMemberVariables;
@@ -28,7 +29,8 @@ public class InfoForNecessaryComments {
         return IterationsStatement;
     }
     public boolean isFunction() { return Function;}
-    public boolean isMemberFunction() { return MemberFunction; }
+    public boolean isFunctionVariables() { return FunctionVariables; }
+    public boolean isClassMemberFunction() { return ClassMemberFunction; }
     public boolean isClass() { return Class; }
     public boolean isClassMemberVariables() { return ClassMemberVariables; }
     public boolean isStructure() { return Structure; }
