@@ -1,82 +1,64 @@
 /**
- * @file LineTraceArea.h
- * @brief ライントレースエリアを攻略するクラス
- * @author Hisataka-Hagiyama,uchyam
+ * @file ArmMotion.cpp
+ * @brief アーム動作クラス
+ * @author kodama0720, yutotanaka24, hiroto0927, miyashita64
  */
 
-#ifndef LINETRACEAREA_H
-#define LINETRACEAREA_H
-#include "array"
-#include "LineTracer.h"
-#include "Pid.h"
+#include "ArmMotion.h"
 
-#include "StraightRunner.h"
-#include "Mileage.h"
-#include "Measurer.h"
-#include "Controller.h"
+bool ArmMotion::keepFlag = true;
 
-/**
- * Lコース/Rコース向けの設定を定義
- * デフォルトはLコース
- */
-#if defined(MAKE_RIGHT)
-static constexpr bool IS_LEFT_COURSE = false;  // Rコース
-#else
-static constexpr bool IS_LEFT_COURSE = true;  // Lコース
-#endif
+int a;
+int b = 1;
 
-struct SectionParam {
-  double sectionDistance;       //区間の走行距離
-  int sectionTargetBrightness;  //区間の目標輝度
-  int sectionPwm;               //区間のPWM値
-  PidGain sectionPidGain;       //区間のPIDゲイン
-};
-
-typedef struct employee {
-    char name[12];
-    double hours;
-    int wage;
-} EMPLOYEE;
-
-union book {
-    char name[16];
-    int price;
-};
-
-enum color {
-  Red,    // 0
-  Blue,   // 1
-  Green,  // 2
-};
-
-enum class E_Dog
+// アームの角位置を目標値に保つ
+void ArmMotion::keepArm()
 {
-    Poodle,
-    Shiba,
-    Chihuahua,
-    Bulldog,
+  Measurer measurer;
+  Controller controller;
+
+  // アーム水平が有効な場合、アームを水平にする
+  while(keepFlag) {
+    int currentCount = measurer.getArmMotorCount();
+    // 水平になったとき、ループを抜ける
+    if(currentCount == HORIZONTAL_ARM_COUNT) {
+      break;
+    }
+    // アームの角度が目標値(水平)になるように、アームを動かす
+    controller.setArmMotorPwm(HORIZONTAL_ARM_COUNT - currentCount);
+    controller.sleep();
+  }
+  controller.sleep();
+}
+
+// アームを上げる
+void ArmMotion::throwMotion(void)
+{
+  Measurer measurer;
+  Controller controller;
+  int upArmPwm = 100;
+  int downArmPwm = -100;
+
+  // アームを水平にする処理を無効化
+  keepFlag = false;
+  //アームを上げる
+  while(measurer.getArmMotorCount() < 40) {
+    controller.setArmMotorPwm(upArmPwm);
+    controller.sleep();
+  }
+  //アームを戻す
+  while(measurer.getArmMotorCount() > -40) {
+    controller.setArmMotorPwm(downArmPwm);
+    controller.sleep();
+  }
+  controller.stopArmMotor();
+
+  // アームを水平にする処理を有効化
+  keepFlag = true;
+}
+
+// フラグのセット
+void ArmMotion::setKeepFlag(bool _keepFlag)
+{
+  keepFlag = _keepFlag;
 };
-
-int Gloval = 1;//izen
-
-class LineTraceArea {
- public:
-
-  static void runLineTraceArea();
-
-  static void runLineTraceAreaShortcut();
-
-  int Area() {
-         return height_ * width_;
-      }
-
- private:
-  static const int LEFT_SECTION_SIZE = 8;
-  static const int RIGHT_SECTION_SIZE = 8;
-  static const std::array<SectionParam, LEFT_SECTION_SIZE> LEFT_COURSE_INFO;
-  static const std::array<SectionParam, RIGHT_SECTION_SIZE> RIGHT_COURSE_INFO;
-
-  LineTraceArea();
-};
-
-#endif

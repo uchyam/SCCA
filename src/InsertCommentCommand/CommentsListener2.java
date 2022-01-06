@@ -24,9 +24,10 @@ public class CommentsListener2 extends CPP14BaseListener {
         resultsText.add(str);
     }
 
-    private boolean isFunctiondefinition;
-    private boolean isFunctiondeclaration;
-    private boolean isParametersandqualifiers;
+    private boolean isFunctiondefinition = false;
+    private boolean isParametersandqualifiers = false;
+    private boolean isParameterdeclaration = false;
+    private boolean isExpression = false;
 
     private InfoForNecessaryComments infoObj;
     int previusComments = -100;
@@ -36,37 +37,74 @@ public class CommentsListener2 extends CPP14BaseListener {
         this.parser = parser;
     }
 
-    //    //自作された型のポインタ
-//    @Override
-//    public void enterExpressionstatement(CPP14Parser.ExpressionstatementContext ctx){
-//        determineWhetherCommentIsNecessary(ctx);
-//    }
+    List<InfoForFunctionComments> infos = new ArrayList<InfoForFunctionComments>();
+    public List<InfoForFunctionComments> getInfos() {
+        return infos;
+    }
+
+    InfoForFunctionComments ifc = new InfoForFunctionComments();
 
     //関数定義の前
     @Override
     public void enterFunctiondefinition(CPP14Parser.FunctiondefinitionContext ctx){
+        this.ifc = new InfoForFunctionComments();
         determineWhetherCommentIsNecessary(ctx);
+        isFunctiondefinition = true;
+    }
+    @Override public void exitFunctiondefinition(CPP14Parser.FunctiondefinitionContext ctx) {
+        this.infos.add(this.ifc);
+        isFunctiondefinition = false;
     }
 
-    @Override
-    public void enterMemberdeclaration(CPP14Parser.MemberdeclarationContext ctx) {
-        //TODO memberdeclartionで，simpletypespecifierになってるやつが変数名になる？
-        isParametersandqualifiers = false;
+    //引数
+    @Override public void enterParameterdeclaration(CPP14Parser.ParameterdeclarationContext ctx) {
+        isParameterdeclaration = true;
+    }
+    @Override public void exitParameterdeclaration(CPP14Parser.ParameterdeclarationContext ctx) {
+        isParameterdeclaration = false;
+    }
+    @Override public void enterDeclspecifierseq(CPP14Parser.DeclspecifierseqContext ctx) {
+        //kata
+    }
+    @Override public void enterDeclarator(CPP14Parser.DeclaratorContext ctx) {
+        if (isFunctiondefinition && isParameterdeclaration) {
+            this.ifc.params.add(ctx.getText());
+        }
+    }
+
+    //return
+    @Override public void enterJumpstatement(CPP14Parser.JumpstatementContext ctx) {
+        if (isFunctiondefinition){
+            isExpression = true;
+        }
+    }
+    @Override public void enterExpression(CPP14Parser.ExpressionContext ctx) {
+        if(isExpression) {
+            this.ifc.returnContent = ctx.getText();
+        }
+        isExpression = false;
     }
 
     @Override public void exitMemberdeclaration(CPP14Parser.MemberdeclarationContext ctx) {
         if(isParametersandqualifiers){
             //関数宣言
-            determineWhetherCommentIsNecessary(ctx);
+            determinePreviusComments(ctx);
+        } else {
+            determinePreviusComments(ctx);
         }
+        isParametersandqualifiers = false;
     }
 
     @Override public void enterParametersandqualifiers(CPP14Parser.ParametersandqualifiersContext ctx) {
         isParametersandqualifiers = true;
     }
 
-    //kannsuunakami?
-    @Override public void enterStatementseq(CPP14Parser.StatementseqContext ctx) { }
+    //変数宣言の前
+    @Override
+    public void enterSimpledeclaration(CPP14Parser.SimpledeclarationContext ctx) {
+        //TODO memberdeclartionで，simpletypespecifierになってるやつが変数名になる？
+        determinePreviusComments(ctx);
+    }
 
     @Override
     public  void exitTranslationunit(CPP14Parser.TranslationunitContext ctx){
@@ -117,6 +155,46 @@ public class CommentsListener2 extends CPP14BaseListener {
             }
         }
     }
+    private void determinePreviusComments(ParserRuleContext ctx) {
+        Token startToken = ctx.getStart();
+        Token stopToken = ctx.getStop();
+        List<Token> beforeCommentChannel = getBeforeHiddenTokens(ctx, 2);
+        List<Token> afterCommentChannel = getAfterHiddenTokens(ctx, 2);
+
+        int beforeIndex = 0;
+        int afterIndex = 0;
+
+        if (beforeCommentChannel != null) {
+//            beforeIndex = beforeCommentChannel.size() -1 ;
+        }
+
+        if (beforeCommentChannel == null && afterCommentChannel == null) {
+//            outPutWhereNeedToComments(startToken);
+        } else if (beforeCommentChannel == null && afterCommentChannel != null) {
+            //後にあるコメントがステートメントと同じ行にある．
+            if (afterCommentChannel.get(afterIndex).getLine() != stopToken.getLine()) {
+//                outPutWhereNeedToComments(startToken);
+            } else {
+                previusComments = afterCommentChannel.get(afterIndex).getTokenIndex();
+            }
+        } else if (beforeCommentChannel != null && afterCommentChannel == null) {
+            //保持しているコメントと，以前のコメントが一緒じゃない．
+            if ((previusComments != beforeCommentChannel.get(beforeIndex).getTokenIndex())) {
+            } else {
+//                outPutWhereNeedToComments(startToken);
+            }
+        } else {
+            if (afterCommentChannel.get(afterIndex).getLine() != stopToken.getLine()) {
+                if (previusComments != beforeCommentChannel.get(beforeIndex).getTokenIndex()) {
+                } else {
+//                    outPutWhereNeedToComments(startToken);
+                }
+            } else {
+                previusComments = afterCommentChannel.get(afterIndex).getTokenIndex();
+            }
+        }
+    }
+
     //隠れているトークンを取得
     private List<Token> getBeforeHiddenTokens(ParserRuleContext ctx, int type){
         Token token= ctx.getStart();
@@ -141,28 +219,14 @@ public class CommentsListener2 extends CPP14BaseListener {
         if(results.isEmpty()) {
             this.results.add(msg);
             setInfo(token.getLine(),token.getText());
+            this.ifc.lineNum = token.getLine();
         } else if(msg.equals (results.get( results.size() -1 ))){ //msgと，esultsの最後の要素が一致してるなら，何もしない．
 
         } else {
             this.results.add(msg);
             setInfo(token.getLine(),token.getText());
+            this.ifc.lineNum = token.getLine();
         }
-    }
-
-    private void outPutWhereNeedToDocumentComments(Token token) {
-        String msg = token.getLine() + "行目の " + token.getText()+"の前にコメントが必要です";
-
-        //重複があるときは追加しないようにするための処理
-        if(results.isEmpty()) {
-            this.results.add(msg);
-            setInfo(token.getLine(),token.getText());
-        } else if(msg.equals (results.get( results.size() -1 ))){ //msgと，esultsの最後の要素が一致してるなら，何もしない．
-
-        } else {
-            this.results.add(msg);
-            setInfo(token.getLine(),token.getText());
-        }
-
     }
 
 }

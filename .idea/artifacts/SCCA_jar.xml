@@ -4,9 +4,9 @@
     <root id="archive" name="SCCA.jar">
       <element id="module-output" name="SCCA" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../lib/gson-2.8.8.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../lib/antlr-4.9.2-complete.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../lib/junit-jupiter-api-5.8.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../lib/jcommander-1.81.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../lib/antlr-4.7-complete.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

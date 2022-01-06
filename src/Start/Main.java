@@ -55,7 +55,7 @@ public class Main {
                     if (commandMain.isOutput() || commandComment.isOutput()) {
                         File f = new File(file);
                         FileRewriter fr = new FileRewriter(f);
-                        fr.outPutRewriteFile(extractor.getResultsLineNum(),extractor.getResultsText());
+                        fr.outPutRewriteFile(extractor.getInfos());
                     }
                 }
             }

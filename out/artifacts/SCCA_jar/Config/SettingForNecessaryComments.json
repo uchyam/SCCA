@@ -1,4 +1,16 @@
 {
-  "SelectionsStatement" : "true",
-  "IterationsStatement": "true"
+  "SelectionsStatement": "false",
+  "IterationsStatement": "false",
+  "Function": "true",
+  "FunctionVariables": "false",
+  "Class": "false",
+  "ClassMemberFunction": "false",
+  "ClassMemberVariables": "false",
+  "Structure": "false",
+  "StructMemberVariables": "false",
+  "Union": "false",
+  "UnionMemberVariables": "false",
+  "EnumStatement": "false",
+  "GlobalVariables": "false",
+  "OthersStatement": "false"
 }

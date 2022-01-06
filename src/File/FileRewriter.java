@@ -1,5 +1,6 @@
 package File;
 
+import InsertCommentCommand.InfoForFunctionComments;
 import ParserOfNeedCommand.Listener.CommentsListener;
 
 import java.io.*;
@@ -19,12 +20,12 @@ public class FileRewriter{
         this.newFilePath = new File("Results/" +fileName);
     }
 
-    public void outPutRewriteFile(List<Integer> lineNumList, List<String> textList)  {
+    public void outPutRewriteFile(List<InfoForFunctionComments> infos)  {
         try{
             if (checkBeforeWriteFile(newFilePath)){
-                processToRewriteToFile(lineNumList, textList, newFilePath);
+                processToRewriteToFile(infos, newFilePath);
             }else if(newFilePath.createNewFile()){
-                processToRewriteToFile(lineNumList, textList, newFilePath);
+                processToRewriteToFile(infos, newFilePath);
             }else{
                 System.out.println("ファイルに書き込めません");
             }
@@ -35,7 +36,7 @@ public class FileRewriter{
     }
 
     //ファイルに書き込む処理
-    private void processToRewriteToFile(List<Integer> lineNumList, List<String> textList, File file) throws IOException {
+    private void processToRewriteToFile(List<InfoForFunctionComments> infos, File file) throws IOException {
         //BufferedReaderを作成．
         BufferedReader bufferedReader = null;
         try {
@@ -45,7 +46,7 @@ public class FileRewriter{
         }
         //ファイルから読み込む
         LinkedList<String> list = getList(bufferedReader);
-        List<String> newList = addComment(lineNumList, textList, list);
+        List<String> newList = addComment(infos, list);
 
         PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
 
@@ -61,17 +62,15 @@ public class FileRewriter{
     }
 
     //コメント
-    private List<String> addComment(List<Integer> lineNumList, List<String> textList, LinkedList<String> list){
+    private List<String> addComment(List<InfoForFunctionComments> infos, LinkedList<String> list){
         int index = -1;
         int count = 0;
         List<String> comment;
-//        StringBuilder indent;
-//        String str;
-//        String[] strArray;
 
-        for(Integer lineNum:lineNumList){
+        for (InfoForFunctionComments info: infos){
+            if (info.lineNum == 0) continue;
             StringBuilder indent = new StringBuilder();
-            String str = list.get(lineNum+index);
+            String str = list.get(info.lineNum+index);
             String[] strArray = str.split("");
             for(String s : strArray) {
                 if(Objects.equals(s, " ") || Objects.equals(s, "\t")){
@@ -80,10 +79,8 @@ public class FileRewriter{
                     break;
                 }
             }
-
-            System.out.println(str);
-            comment = createComment(indent.toString());
-            list.addAll(lineNum + index, comment);
+            comment = createComment(indent.toString(), info);
+            list.addAll(info.lineNum + index, comment);
             index += comment.size();
             count++;
         }
@@ -91,12 +88,18 @@ public class FileRewriter{
         return list;
     }
 
-    private List<String> createComment(String indent){
+    private List<String> createComment(String indent, InfoForFunctionComments info){
         List<String> comment = new ArrayList<>();
         comment.add(indent+"/**");
         comment.add(indent+" *@brief");
-        comment.add(indent+" *@param");
-        comment.add(indent+" *@return");
+        if (info.params != null) {
+            for (String s: info.params) {
+                comment.add(indent + " *@param " + s);
+            }
+        }
+        if (info.returnContent != null) {
+            comment.add(indent + " *@return " + info.returnContent);
+        }
         comment.add(indent+" *@attention This comment was written by SCCA.");
         comment.add(indent+" */");
         return comment;

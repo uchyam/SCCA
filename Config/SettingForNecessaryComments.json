@@ -10,7 +10,7 @@
   "StructMemberVariables" : "false",
   "Union" : "false",
   "UnionMemberVariables" : "false",
-  "EnumStatement" : "false",
+  "EnumStatement" : "true",
   "GlobalVariables" : "false",
   "OthersStatement" : "false"
 }
