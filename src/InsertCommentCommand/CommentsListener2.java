@@ -41,7 +41,6 @@ public class CommentsListener2 extends CPP14BaseListener {
     public List<InfoForFunctionComments> getInfos() {
         return infos;
     }
-
     InfoForFunctionComments ifc = new InfoForFunctionComments();
 
     //関数定義の前
@@ -228,5 +227,4 @@ public class CommentsListener2 extends CPP14BaseListener {
             this.ifc.lineNum = token.getLine();
         }
     }
-
 }

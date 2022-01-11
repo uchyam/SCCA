@@ -50,12 +50,12 @@ public class Main {
                 }
             }else if(jCommander.getParsedCommand().equals("X")){
                 for (String file : commandComment.getFiles()) {
-                    CommentsListener2 extractor = startDefectInsertComments(file);
+                    CommentsListener extractor = startDefectWhetherCommentsAreNecessary(file);
                     //結果をファイルに出力
                     if (commandMain.isOutput() || commandComment.isOutput()) {
                         File f = new File(file);
                         FileRewriter fr = new FileRewriter(f);
-                        fr.outPutRewriteFile(extractor.getInfos());
+                        fr.outPutRewriteFile(extractor.getResultIfcs());
                     }
                 }
             }

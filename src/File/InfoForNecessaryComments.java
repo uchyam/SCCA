@@ -20,7 +20,7 @@ public class InfoForNecessaryComments {
     private boolean UnionMemberVariables;
     private boolean EnumStatement;
     private boolean GlobalVariables;
-    private boolean OthersStatement;
+    private boolean Constructor;
 
     public boolean isSelectionsStatement() {
         return SelectionsStatement;
@@ -39,6 +39,6 @@ public class InfoForNecessaryComments {
     public boolean isUnionMemberVariables() { return UnionMemberVariables; }
     public boolean isEnumStatement() { return EnumStatement; }
     public boolean isGlobalVariables() { return GlobalVariables; }
-    public boolean isOthersStatement(){ return OthersStatement; }
+    public boolean isConstructor(){ return Constructor; }
 
 }
