@@ -15,8 +15,6 @@ public class InfoForComment {
     public List<String> params = new ArrayList<>();
     public String returnContent;
 
-    public InfoForComment(){}
-
     public InfoForComment(ParserRuleContext ctx){
         this.ctx = ctx;
     }
@@ -24,6 +22,12 @@ public class InfoForComment {
     public InfoForComment(int lineNum, CommentType commentType){
         this.lineNum = lineNum;
         this.commentType = commentType;
+    }
+
+    public InfoForComment(int lineNum, CommentType commentType, List<String> params){
+        this.lineNum = lineNum;
+        this.commentType = commentType;
+        this.params = params;
     }
 
     public InfoForComment(ParserRuleContext ctx, boolean b, CommentType ct){

@@ -18,7 +18,6 @@ public class CommentsListener extends CPP14BaseListener {
     private CPP14Parser parser;
 
     private ArrayList<String> results = new ArrayList<String>();
-
     public List<String> getResults() {
         return this.results;
     }
@@ -26,10 +25,13 @@ public class CommentsListener extends CPP14BaseListener {
     private boolean isFunctiondefinition = false;
     private boolean isParametersandqualifiers = false;
     private boolean isEnumspecifier = false;
+    private boolean isParameterdeclaration = false;
     private String classType = null;
     private String classname = null;
     private String functionname = null;
     private String nestedClassType = null;
+
+    public List<String> params = new ArrayList<>();
 
     private InfoForNecessaryComments infoObj;
     int previusComments = -100;
@@ -43,36 +45,11 @@ public class CommentsListener extends CPP14BaseListener {
         infoObj = fileInPuter.getInfoForNecessaryCommentsObj();
     }
 
-//    private class ctxInfo {
-//        ParserRuleContext ctx;
-//        int lineNum;
-//        boolean needsDecision;
-//        CommentType commentType;
-//
-//        public ctxInfo(ParserRuleContext ctx){
-//            this.ctx = ctx;
-//        }
-//
-//        public ctxInfo(ParserRuleContext ctx, boolean b, CommentType ct) {
-//            this.ctx = ctx;
-//            this.lineNum = ctx.getStart().getLine();
-//            this.needsDecision = b;
-//            this.commentType = ct;
-//        }
-//
-//        public int getLineNum() {
-//            return lineNum;
-//        }
-//    }
-//
-//    List<ctxInfo> ctxInfos = new ArrayList<>();
-
-    List<InfoForComment> Ifcs = new ArrayList<InfoForComment>();
-    List<InfoForComment> ResultIfcs = new ArrayList<InfoForComment>();
+    private List<InfoForComment> Ifcs = new ArrayList<InfoForComment>();
+    private List<InfoForComment> ResultIfcs = new ArrayList<InfoForComment>();
     public List<InfoForComment> getResultIfcs() {
         return ResultIfcs;
     }
-//    InfoForComment ifc = new InfoForComment();
 
     //    //自作された型のポインタ
 //    @Override
@@ -85,19 +62,20 @@ public class CommentsListener extends CPP14BaseListener {
     public void enterFunctiondefinition(CPP14Parser.FunctiondefinitionContext ctx) {
         isFunctiondefinition = true;
         functionname = null;
+        params = new ArrayList<>();
     }
 
     @Override
     public void exitFunctiondefinition(CPP14Parser.FunctiondefinitionContext ctx) {
         if (classType == null) {
-            Ifcs.add(new InfoForComment(ctx, infoObj.isFunction(), CommentType.FunctionComment));
+            Ifcs.add(new InfoForComment(ctx, infoObj.isFunction(), CommentType.FunctionComment, params));
             System.out.println("関数" + ctx.getStart().getLine());
         } else {
             if (Objects.equals(classname, functionname)){
-                Ifcs.add(new InfoForComment(ctx, infoObj.isConstructor(), CommentType.ConstructorComment));
+                Ifcs.add(new InfoForComment(ctx, infoObj.isConstructor(), CommentType.ConstructorComment, params));
                 System.out.println("コンストラクタ" + ctx.getStart().getLine());
             } else {
-                Ifcs.add(new InfoForComment(ctx, infoObj.isClassMemberFunction(), CommentType.FunctionComment));
+                Ifcs.add(new InfoForComment(ctx, infoObj.isClassMemberFunction(), CommentType.FunctionComment, params));
                 System.out.println("メンバ関数" + ctx.getStart().getLine());
             }
         }
@@ -182,6 +160,22 @@ public class CommentsListener extends CPP14BaseListener {
         isEnumspecifier = true;
     }
 
+    //引数
+    @Override public void enterParameterdeclaration(CPP14Parser.ParameterdeclarationContext ctx) {
+        isParameterdeclaration = true;
+    }
+    @Override public void exitParameterdeclaration(CPP14Parser.ParameterdeclarationContext ctx) {
+        isParameterdeclaration = false;
+    }
+    @Override public void enterDeclspecifierseq(CPP14Parser.DeclspecifierseqContext ctx) {
+        //kata
+    }
+    @Override public void enterDeclarator(CPP14Parser.DeclaratorContext ctx) {
+        if (isFunctiondefinition && isParameterdeclaration) {
+            this.params.add(ctx.getText());
+        }
+    }
+
     @Override
     public void exitSimpledeclaration(CPP14Parser.SimpledeclarationContext ctx) {
         if (Objects.nonNull(classType)) {
@@ -243,14 +237,11 @@ public class CommentsListener extends CPP14BaseListener {
     @Override
     public void exitTranslationunit(CPP14Parser.TranslationunitContext ctx) {
         Ifcs.sort(Comparator.comparing(InfoForComment::getLineNum));
-        for (InfoForComment c : Ifcs) {
-            System.out.println(c.lineNum + " " + c.needsDecision);
-            if (c.needsDecision) {
-                System.out.println("trueeeeeeeeeeee");
-                determineWhetherCommentIsNecessary(c);
+        for (InfoForComment ifc : Ifcs) {
+            if (ifc.needsDecision) {
+                determineWhetherCommentIsNecessary(ifc);
             } else {
-                System.out.println("falseeeeeeeeeee");
-                determinePreviusComments(c.ctx);
+                determinePreviusComments(ifc.ctx);
             }
         }
         for (String result : results) {
@@ -259,8 +250,8 @@ public class CommentsListener extends CPP14BaseListener {
     }
 
     //ここがもっとも重要なコード
-    private void determineWhetherCommentIsNecessary(InfoForComment c) {
-        ParserRuleContext ctx = c.ctx;
+    private void determineWhetherCommentIsNecessary(InfoForComment ifc) {
+        ParserRuleContext ctx = ifc.ctx;
         Token startToken = ctx.getStart();
         Token stopToken = ctx.getStop();
         List<Token> beforeCommentChannel = getBeforeHiddenTokens(ctx, 2);
@@ -281,11 +272,11 @@ public class CommentsListener extends CPP14BaseListener {
         //TODO 条件分岐が複雑すぎる．真理値表を参照．
 
         if (beforeCommentChannel == null && afterCommentChannel == null) {
-            outPutWhereNeedToComments(c);
+            outPutWhereNeedToComments(ifc);
         } else if (beforeCommentChannel == null && afterCommentChannel != null) {
             //後にあるコメントがステートメントと同じ行にある．
             if (afterCommentChannel.get(afterIndex).getLine() != stopToken.getLine()) {
-                outPutWhereNeedToComments(c);
+                outPutWhereNeedToComments(ifc);
             } else {
                 previusComments = afterCommentChannel.get(afterIndex).getTokenIndex();
             }
@@ -293,13 +284,13 @@ public class CommentsListener extends CPP14BaseListener {
             //保持しているコメントと，以前のコメントが一緒じゃない．
             if ((previusComments != beforeCommentChannel.get(beforeIndex).getTokenIndex())) {
             } else {
-                outPutWhereNeedToComments(c);
+                outPutWhereNeedToComments(ifc);
             }
         } else {
             if (afterCommentChannel.get(afterIndex).getLine() != stopToken.getLine()) {
                 if (previusComments != beforeCommentChannel.get(beforeIndex).getTokenIndex()) {
                 } else {
-                    outPutWhereNeedToComments(c);
+                    outPutWhereNeedToComments(ifc);
                 }
             } else {
                 previusComments = afterCommentChannel.get(afterIndex).getTokenIndex();
@@ -367,19 +358,27 @@ public class CommentsListener extends CPP14BaseListener {
     }
 
     //コメントの出力の処理
-    private void outPutWhereNeedToComments(InfoForComment c) {
-        Token token = c.ctx.getStart();
+    private void outPutWhereNeedToComments(InfoForComment ifc) {
+        Token token = ifc.ctx.getStart();
         String msg = token.getLine() + "行目の " + token.getText() + "の前にコメントが必要です";
 
         //重複があるときは追加しないようにするための処理
         if (results.isEmpty()) {
             this.results.add(msg);
-            ResultIfcs.add(new InfoForComment(token.getLine(), c.commentType));
+            if (ifc.params == null) {
+                ResultIfcs.add(new InfoForComment(token.getLine(), ifc.commentType));
+            } else {
+                ResultIfcs.add(new InfoForComment(token.getLine(), ifc.commentType, ifc.params));
+            }
         } else if (msg.equals(results.get(results.size() - 1))) { //msgと，resultsの最後の要素が一致してるなら，何もしない．
 
         } else {
             this.results.add(msg);
-            ResultIfcs.add(new InfoForComment(token.getLine(), c.commentType));
+            if (ifc.params == null) {
+                ResultIfcs.add(new InfoForComment(token.getLine(), ifc.commentType));
+            } else {
+                ResultIfcs.add(new InfoForComment(token.getLine(), ifc.commentType, ifc.params));
+            }
         }
     }
 
