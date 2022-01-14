@@ -69,14 +69,14 @@ public class CommentsListener extends CPP14BaseListener {
     public void exitFunctiondefinition(CPP14Parser.FunctiondefinitionContext ctx) {
         if (classType == null) {
             Ifcs.add(new InfoForComment(ctx, infoObj.isFunction(), CommentType.FunctionComment, params));
-            System.out.println("関数" + ctx.getStart().getLine());
+//            System.out.println("関数" + ctx.getStart().getLine());
         } else {
             if (Objects.equals(classname, functionname)){
                 Ifcs.add(new InfoForComment(ctx, infoObj.isConstructor(), CommentType.ConstructorComment, params));
-                System.out.println("コンストラクタ" + ctx.getStart().getLine());
+//                System.out.println("コンストラクタ" + ctx.getStart().getLine());
             } else {
                 Ifcs.add(new InfoForComment(ctx, infoObj.isClassMemberFunction(), CommentType.FunctionComment, params));
-                System.out.println("メンバ関数" + ctx.getStart().getLine());
+//                System.out.println("メンバ関数" + ctx.getStart().getLine());
             }
         }
         isFunctiondefinition = false;
@@ -102,24 +102,24 @@ public class CommentsListener extends CPP14BaseListener {
         } else if (Objects.equals(classType, "class")) {
                 //クラスのメンバ変数
                 Ifcs.add(new InfoForComment(ctx, infoObj.isClassMemberVariables(), CommentType.InlineComment));
-                System.out.println("classメンバ変数" + ctx.getStart().getLine());
+//                System.out.println("classメンバ変数" + ctx.getStart().getLine());
         } else if (Objects.equals(classType, "struct")) {
             //構造体のメンバ変数
             Ifcs.add(new InfoForComment(ctx, infoObj.isStructMemberVariables(), CommentType.SameLineComment));
-            System.out.println("structメンバ変数" + ctx.getStart().getLine());
+//            System.out.println("structメンバ変数" + ctx.getStart().getLine());
         } else if (Objects.equals(classType, "union")) {
             //共用体のメンバ変数
             Ifcs.add(new InfoForComment(ctx, infoObj.isUnionMemberVariables(), CommentType.SameLineComment));
-            System.out.println("unionメンバ変数" + ctx.getStart().getLine());
+//            System.out.println("unionメンバ変数" + ctx.getStart().getLine());
         } else if (isEnumspecifier) {
             //列挙体
             Ifcs.add(new InfoForComment(ctx, infoObj.isEnumStatement(), CommentType.ClassComment));
-            System.out.println("メンバenum" + ctx.getStart().getLine());
+//            System.out.println("メンバenum" + ctx.getStart().getLine());
             isEnumspecifier = false;
         } else {
             //その他メンバ
             Ifcs.add(new InfoForComment(ctx));
-            System.out.println("その他メンバ" + ctx.getStart().getLine());
+//            System.out.println("その他メンバ" + ctx.getStart().getLine());
         }
     }
 
@@ -182,15 +182,15 @@ public class CommentsListener extends CPP14BaseListener {
             if (Objects.equals(classType, "class")) {
                 //クラス
                 Ifcs.add(new InfoForComment(ctx, infoObj.isClass(), CommentType.ClassComment));
-                System.out.println("クラス" + ctx.getStart().getLine());
+//                System.out.println("クラス" + ctx.getStart().getLine());
             } else if (Objects.equals(classType, "struct")) {
                 //構造体
                 Ifcs.add(new InfoForComment(ctx, infoObj.isStructure(), CommentType.BlockComment));
-                System.out.println("構造体" + ctx.getStart().getLine());
+//                System.out.println("構造体" + ctx.getStart().getLine());
             } else if (Objects.equals(classType, "union")) {
                 //共用体
                 Ifcs.add(new InfoForComment(ctx, infoObj.isUnion(), CommentType.BlockComment));
-                System.out.println("共用体" + ctx.getStart().getLine());
+//                System.out.println("共用体" + ctx.getStart().getLine());
             } else {
                 Ifcs.add(new InfoForComment(ctx, false, null));
             }
@@ -198,16 +198,16 @@ public class CommentsListener extends CPP14BaseListener {
         } else if (isFunctiondefinition) {
             //関数内の変数
             Ifcs.add(new InfoForComment(ctx, infoObj.isFunctionVariables(), CommentType.InlineComment));
-            System.out.println("関数内の変数" + ctx.getStart().getLine());
+//            System.out.println("関数内の変数" + ctx.getStart().getLine());
         }else if (isEnumspecifier) {
             //列挙体
             Ifcs.add(new InfoForComment(ctx, infoObj.isEnumStatement(), CommentType.BlockComment));
-            System.out.println("enum" + ctx.getStart().getLine());
+//            System.out.println("enum" + ctx.getStart().getLine());
             isEnumspecifier = false;
         } else {
             //その他
             Ifcs.add(new InfoForComment(ctx, infoObj.isGlobalVariables(), CommentType.InlineComment));
-            System.out.println("グローバル変数" + ctx.getStart().getLine());
+//            System.out.println("グローバル変数" + ctx.getStart().getLine());
         }
     }
 
