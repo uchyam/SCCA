@@ -44,16 +44,16 @@ public class GenerateComment {
 
     private void createFunctionComment(){
         comment.add(indent+"/**");
-        comment.add(indent+" *@brief");
+        comment.add(indent+" * SCCA Comment");
+        comment.add(indent+" * @brief");
         if (ifc.params != null) {
             for (String s: ifc.params) {
-                comment.add(indent + " *@param " + s);
+                comment.add(indent + " * @param " + s);
             }
         }
         if (ifc.returnContent != null) {
-            comment.add(indent + " *@return " + ifc.returnContent);
+            comment.add(indent + " * @return " + ifc.returnContent);
         }
-        comment.add(indent+" *@attention This comment was written by SCCA.");
         comment.add(indent+" */");
     }
 
@@ -65,17 +65,17 @@ public class GenerateComment {
 
     private void createBlockComment(){
         comment.add(indent+"/**");
-        comment.add(indent+" * ");
+        comment.add(indent+" * SCCA Comment");
         comment.add(indent+" */");
     }
 
     private void createInlineComment(){
-        comment.add(indent+"//!");
+        comment.add(indent+"//! SCCA Comment");
     }
 
     private void createClassComment(){
         comment.add(indent+"/**");
-        comment.add(indent+" * ");
+        comment.add(indent+" * SCCA Comment");
         comment.add(indent+" */");
     }
 }

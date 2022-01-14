@@ -263,7 +263,7 @@ public class CommentsListener extends CPP14BaseListener {
         if (beforeCommentChannel != null) {
 //            beforeIndex = beforeCommentChannel.size() -1 ;
             String str = beforeCommentChannel.toString();
-            String sample = "This comment was written by SCCA.";
+            String sample = "SCCA Comment";
             if (str.contains(sample)) {
                 outPutWhereSccaComments(startToken);
             }

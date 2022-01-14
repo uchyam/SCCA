@@ -1,3 +1,4 @@
+2022-01-14 15:42:06
 #include <iostream>
 
 using namespace std;
@@ -23,6 +24,12 @@ int main() {
     return 0;
 }
 
+/**
+ * SCCA Comment
+ * @brief
+ * @param a
+ * @param b
+ */
 int add(int a, int b) {
     return (a + b);
 }
