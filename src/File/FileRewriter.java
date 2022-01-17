@@ -42,20 +42,21 @@ public class FileRewriter{
         //BufferedReaderを作成．
         BufferedReader bufferedReader = null;
         try {
-            bufferedReader = new BufferedReader(new FileReader(filePath));
+            bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         //ファイルから読み込む
         LinkedList<String> list = getList(bufferedReader);
+        //コメントの挿入
         List<String> newList = addComment(ifcs, list);
 
-        PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+        PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),"UTF-8")));
 
         //日付を追加する．
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        pw.println(sdf.format(c.getTime()));
+//        Calendar c = Calendar.getInstance();
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        pw.println(sdf.format(c.getTime()));
 
         for(String result:newList){
             pw.println(result);
