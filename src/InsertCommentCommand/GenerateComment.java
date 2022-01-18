@@ -44,8 +44,7 @@ public class GenerateComment {
 
     private void createFunctionComment(){
         comment.add(indent+"/**");
-        comment.add(indent+" * SCCA Comment");
-        comment.add(indent+" * @brief");
+        comment.add(indent+" * @brief SCCA Comment");
         if (ifc.params != null) {
             for (String s: ifc.params) {
                 comment.add(indent + " * @param " + s);

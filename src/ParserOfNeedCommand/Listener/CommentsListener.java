@@ -68,11 +68,16 @@ public class CommentsListener extends CPP14BaseListener {
     @Override
     public void exitFunctiondefinition(CPP14Parser.FunctiondefinitionContext ctx) {
         if (classType == null) {
-            Ifcs.add(new InfoForComment(ctx, infoObj.isFunction(), CommentType.FunctionComment, params));
+            if (Objects.equals(classname, functionname)){
+                Ifcs.add(new InfoForComment(ctx, infoObj.isConstructor(), CommentType.ConstructorComment));
+                classname = null;
+            }else {
+                Ifcs.add(new InfoForComment(ctx, infoObj.isFunction(), CommentType.FunctionComment, params));
 //            System.out.println("関数" + ctx.getStart().getLine());
+            }
         } else {
             if (Objects.equals(classname, functionname)){
-                Ifcs.add(new InfoForComment(ctx, infoObj.isConstructor(), CommentType.ConstructorComment, params));
+                Ifcs.add(new InfoForComment(ctx, infoObj.isConstructor(), CommentType.ConstructorComment));
 //                System.out.println("コンストラクタ" + ctx.getStart().getLine());
             } else {
                 Ifcs.add(new InfoForComment(ctx, infoObj.isClassMemberFunction(), CommentType.FunctionComment, params));
@@ -195,6 +200,7 @@ public class CommentsListener extends CPP14BaseListener {
                 Ifcs.add(new InfoForComment(ctx, false, null));
             }
             classType = null;
+            classname = null;
         } else if (isFunctiondefinition) {
             //関数内の変数
             Ifcs.add(new InfoForComment(ctx, infoObj.isFunctionVariables(), CommentType.InlineComment));
@@ -227,11 +233,11 @@ public class CommentsListener extends CPP14BaseListener {
     @Override public void enterTranslationunit(CPP14Parser.TranslationunitContext ctx) {
         List<Token> beforeCommentChannel = getBeforeHiddenTokens(ctx, 2);
         //ファイルへのコメントがある場合
-        if(beforeCommentChannel != null) {
-            if(beforeCommentChannel.get(0).getTokenIndex() == 0){
-                previusComments = 0;
-            }
-        }
+//        if(beforeCommentChannel != null) {
+//            if(beforeCommentChannel.get(0).getTokenIndex() == 0){
+//                previusComments = 0;
+//            }
+//        }
     }
 
     @Override
