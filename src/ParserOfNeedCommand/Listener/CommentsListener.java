@@ -157,6 +157,9 @@ public class CommentsListener extends CPP14BaseListener {
             if (functionname == null) {
                 functionname = ctx.getText();
             }
+            if (isParameterdeclaration){
+                this.params.add(ctx.getText());
+            }
         }
     }
 
@@ -175,11 +178,11 @@ public class CommentsListener extends CPP14BaseListener {
     @Override public void enterDeclspecifierseq(CPP14Parser.DeclspecifierseqContext ctx) {
         //kata
     }
-    @Override public void enterDeclarator(CPP14Parser.DeclaratorContext ctx) {
-        if (isFunctiondefinition && isParameterdeclaration) {
-            this.params.add(ctx.getText());
-        }
-    }
+//    @Override public void enterDeclarator(CPP14Parser.DeclaratorContext ctx) {
+//        if (isFunctiondefinition && isParameterdeclaration) {
+//            this.params.add(ctx.getText());
+//        }
+//    }
 
     @Override
     public void exitSimpledeclaration(CPP14Parser.SimpledeclarationContext ctx) {
