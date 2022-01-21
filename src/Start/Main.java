@@ -40,8 +40,8 @@ public class Main {
                     //結果をファイルに出力
                     if (commandMain.isOutput() || commandNecessary.isOutput()) {
                         File f = new File(file);
-                        FileOutputer fo = new FileOutputer(f);
-                        fo.outPutToFile(extractor.getResults());
+                        FileRewriter fr = new FileRewriter(f);
+                        fr.outPutRewriteFile(extractor.getResultIfcs());
                     }
                 }
             }else if(jCommander.getParsedCommand().equals("specific")) {
