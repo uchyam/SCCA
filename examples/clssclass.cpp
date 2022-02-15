@@ -2,38 +2,43 @@
 #include <iostream>
 #include <string>
 
-enum color1 {
-  Red,    // 0
-  Blue,   // 1
-  Green,  // 2
+struct Student{
+char name;
+int age;
 };
 
-enum class color2 {
-Yellow,
-Black,
-White,
-};
+int global_var = 123;
 
-struct Class2{
-int a;
-int b;
-};
+struct Student{
+char name;
+int age;
+};//Studentに対するコメント
 
-int func(int a, int b)	// 関数
-{
-	return a + b;
+int func(int a, int b){
+
+int c;
+
+c = a+b;
+
+int d;
+
+d = 2 * c;
+
+return a+b;
 }
 
-class Class1{
-Class1(){};
-Class1(){}
-//int func1(int a, int b){return a + b;}
-};
+char name;
+int age;//ageに対するコメント
 
-enum color {
-  Red,    // 0
-  Blue,   // 1
-  Green,  // 2
-};
+age = age + 2;
 
-// ctrl + alt + l
+int sum(int a, int b){
+  if(a > 0){
+  a = a + 1;
+  } else {
+  a = a - 1;
+  }
+  return a + b;
+}
+
+int func2(int &a){}

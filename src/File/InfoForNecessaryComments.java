@@ -12,7 +12,7 @@ public class InfoForNecessaryComments {
     private boolean Function;
     private boolean FunctionVariables;
     private boolean Class;
-    private boolean ClassMemberFunction;
+    private boolean MemberFunction;
     private boolean ClassMemberVariables;
     private boolean Structure;
     private boolean StructMemberVariables;
@@ -30,7 +30,7 @@ public class InfoForNecessaryComments {
     }
     public boolean isFunction() { return Function;}
     public boolean isFunctionVariables() { return FunctionVariables; }
-    public boolean isClassMemberFunction() { return ClassMemberFunction; }
+    public boolean isMemberFunction() { return MemberFunction; }
     public boolean isClass() { return Class; }
     public boolean isClassMemberVariables() { return ClassMemberVariables; }
     public boolean isStructure() { return Structure; }

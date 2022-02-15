@@ -42,5 +42,6 @@
     <orderEntry type="library" name="gson-2.8.8" level="project" />
     <orderEntry type="library" name="junit-jupiter-api-5.8.0" level="project" />
     <orderEntry type="library" name="antlr-4.7-complete" level="project" />
+    <orderEntry type="library" name="javacc" level="project" />
   </component>
 </module>

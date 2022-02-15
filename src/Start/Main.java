@@ -1,6 +1,5 @@
 package Start;
 
-import InsertCommentCommand.CommentsListener2;
 import ParserOfNeedCommand.Generated.CPP14Lexer;
 import ParserOfNeedCommand.Generated.CPP14Parser;
 import ParserOfNeedCommand.Listener.CommentsListener;
@@ -9,7 +8,6 @@ import ParserOfSpecificCommand.Dicitonary.CommentsDictionary;
 
 import com.beust.jcommander.JCommander;
 
-import com.google.gson.Gson;
 import org.antlr.v4.gui.Trees;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -28,14 +26,20 @@ public class Main {
         CommandMain commandMain = new CommandMain();
         CommandNecessary commandNecessary = new CommandNecessary();
         CommandSpecific commandSpecific = new CommandSpecific();
-        CommandComment commandComment = new CommandComment();
-        JCommander jCommander = JCommander.newBuilder() .addObject(commandMain) .addCommand("necessary",commandNecessary) .addCommand("specific",commandSpecific) .addCommand("X",commandComment) .build();
+        JCommander jCommander = JCommander.newBuilder() .addObject(commandMain) .addCommand("necessary",commandNecessary) .addCommand("specific",commandSpecific) .build();
         jCommander.parse(argv);
 
         if(jCommander.getParsedCommand() != null){
             //コマンドラインオプションによって機能の切り替え
             if(jCommander.getParsedCommand().equals("necessary")) {
                 for (String file : commandNecessary.getFiles()) {
+//                    CommentsListener extractor = startDefectWhetherCommentsAreNecessary(file);
+//                    //結果をファイルに出力
+//                    if (commandMain.isOutput() || commandNecessary.isOutput()) {
+//                        File f = new File(file);
+//                        FileOutputer fo = new FileOutputer(f);
+//                        fo.outPutToFile(extractor.getResults());
+//                    }
                     CommentsListener extractor = startDefectWhetherCommentsAreNecessary(file);
                     //結果をファイルに出力
                     if (commandMain.isOutput() || commandNecessary.isOutput()) {
@@ -47,16 +51,6 @@ public class Main {
             }else if(jCommander.getParsedCommand().equals("specific")) {
                 for (String file : commandSpecific.getFiles()) {
                     startDefectSpecificComments(file);
-                }
-            }else if(jCommander.getParsedCommand().equals("X")){
-                for (String file : commandComment.getFiles()) {
-                    CommentsListener extractor = startDefectWhetherCommentsAreNecessary(file);
-                    //結果をファイルに出力
-                    if (commandMain.isOutput() || commandComment.isOutput()) {
-                        File f = new File(file);
-                        FileRewriter fr = new FileRewriter(f);
-                        fr.outPutRewriteFile(extractor.getResultIfcs());
-                    }
                 }
             }
         }else{
@@ -126,33 +120,4 @@ public class Main {
         }
     }
 
-    public static CommentsListener2 startDefectInsertComments(String filePath){
-        // create a CharStream that reads from standard input
-        try {
-            CharStream input = CharStreams.fromFileName(filePath);
-            // create a lexer that feeds off of input CharStream
-            CPP14Lexer lexer = new CPP14Lexer(input);
-            // create a buffer of tokens pulled from the lexer
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            // create a parser that feeds off the tokens buffer
-            CPP14Parser parser = new CPP14Parser(tokens);
-            ParseTree tree = parser.translationunit();    // begin parsing at rule
-            //walkerで構文木をたどる
-            ParseTreeWalker walker = new ParseTreeWalker();
-            //h.ファイルと，cppファイルでリスナーを分ける．
-            //リスナーをわけないと，木構造的に上手く動かない事がある．
-            CommentsListener2 extractor = new CommentsListener2(tokens,parser);
-            walker.walk(extractor,tree);
-            //構文木を表示
-            Trees.inspect(tree,parser);
-            return extractor;
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //これnullを返していいの？
-        return null;
-    }
 }
